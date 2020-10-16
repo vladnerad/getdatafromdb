@@ -1,9 +1,10 @@
 package com.dst.getdatafromdb;
 
 import com.mongodb.client.MongoClients;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
@@ -12,17 +13,16 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import javax.swing.filechooser.FileSystemView;
 import java.io.*;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
 
 @SpringBootApplication
 public class GetdatafromdbApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(GetdatafromdbApplication.class, args);
+    private static final Logger logger = LogManager.getLogger(GetdatafromdbApplication.class);
 
-        MongoOperations mongoOpsParsed = new MongoTemplate(new SimpleMongoClientDatabaseFactory(MongoClients.create("mongodb://parsedreader:dst-ural@localhost:27017/?authSource=wl_parsed&readPreference=primary&appname=MongoDB%20Compass&ssl=false"), "wl_parsed"));
+    public static void main(String[] args) {
+//        SpringApplication.run(GetdatafromdbApplication.class, args);
+
+        MongoOperations mongoOpsParsed = new MongoTemplate(new SimpleMongoClientDatabaseFactory(MongoClients.create("mongodb://parsedreader:dst-ural@192.168.212.171:27017/?authSource=wl_parsed&readPreference=primary&appname=MongoDB%20Compass&ssl=false"), "wl_parsed"));
 
         String machineN = "";
         String from = "";
@@ -45,6 +45,10 @@ public class GetdatafromdbApplication {
 
         String desktopPath = FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath();
         String fileName = machineN.concat(" ").concat(from).concat("--").concat(to).concat(".csv");
+
+        from = from.concat("T00:00:000Z");
+        to = to.concat("T23:59:599Z");
+
 
         try (FileWriter fileWriter = new FileWriter(new File(desktopPath + "\\" + fileName))) {
 //            Query query = new Query().addCriteria(Criteria.where("time").gte(fromInst).lte(toInst));
