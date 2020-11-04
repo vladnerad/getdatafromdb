@@ -22,7 +22,7 @@ public class GetdatafromdbApplication {
     public static void main(String[] args) {
 //        SpringApplication.run(GetdatafromdbApplication.class, args);
 
-        MongoOperations mongoOpsParsed = new MongoTemplate(new SimpleMongoClientDatabaseFactory(MongoClients.create("mongodb://parsedreader:dst-ural@192.168.212.171:27017/?authSource=wl_parsed&readPreference=primary&appname=MongoDB%20Compass&ssl=false"), "wl_parsed"));
+        MongoOperations mongoOpsParsed = new MongoTemplate(new SimpleMongoClientDatabaseFactory(MongoClients.create("mongodb://parsedreader:dst-ural@192.168.211.28:27017/?authSource=wl_parsed&readPreference=primary&appname=MongoDB%20Compass&ssl=false"), "wl_parsed"));
 
         String machineN = "";
         String from = "";
@@ -43,14 +43,19 @@ public class GetdatafromdbApplication {
 //        System.out.println(fromInst);
 //        Instant toInst = Instant.parse(to).truncatedTo(ChronoUnit.MILLIS);
 
-        String desktopPath = FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath();
+//        String desktopPath = FileSystemView.getFileSystemView().getHomeDirectory().getAbsolutePath();
         String fileName = machineN.concat(" ").concat(from).concat("--").concat(to).concat(".csv");
+
+        File dir = new File("locarus_data");
+        if (!dir.exists()){
+            dir.mkdirs();
+        }
 
         from = from.concat("T00:00:000Z");
         to = to.concat("T23:59:599Z");
 
-
-        try (FileWriter fileWriter = new FileWriter(new File(desktopPath + "\\" + fileName))) {
+        File outputFile = new File(dir.getAbsolutePath() + "\\" + fileName);
+        try (FileWriter fileWriter = new FileWriter(outputFile)) {
 //            Query query = new Query().addCriteria(Criteria.where("time").gte(fromInst).lte(toInst));
             Query query = new Query().addCriteria(Criteria.where("time").gte(from).lte(to));
 //            System.out.println(query);
@@ -62,6 +67,7 @@ public class GetdatafromdbApplication {
                     e.printStackTrace();
                 }
             });
+            System.out.println("Created file: " + outputFile.getAbsolutePath());
 
 //            List<ParsedEntity> parsedEntity = mongoOpsParsed.find(query, ParsedEntity.class, machineN);
 //            System.out.println(mongoOpsParsed.findOne(query, ParsedEntity.class, machineN).getCsvHeader());
