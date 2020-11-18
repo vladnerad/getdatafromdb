@@ -1,25 +1,18 @@
 package com.dst.getdatafromdb;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
+@Document
 public class ParsedEntity {
 
     private String time;
     private TreeMap<String, Double> params;
     private TreeMap<String, Boolean> flags;
-
-//    public void setParams(Map<String, Double> params) {
-//        this.params = (TreeMap<String, Double>) params;
-//    }
-//
-//    public void setTime(String time) {
-//        this.time = time;
-//    }
-//
-//    public String getTime() {
-//        return time;
-//    }
+    private ArrayList<Double> hstErrors = new ArrayList<>();
 
     /** Нужно добавить обработку событий, когда заголовок был не сразу в данных, т.к. структура задана не жестко **/
     public String getCsvHeader(){
@@ -33,6 +26,8 @@ public class ParsedEntity {
         for(Map.Entry<String, Boolean> entry: flags.entrySet()){
             stringBuilder.append(entry.getKey()).append(",");
         }
+        //Errors (spn+fmi)
+        stringBuilder.append("Errors (spn.fmi)").append(",");
         return stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString();
     }
 
@@ -43,10 +38,18 @@ public class ParsedEntity {
         for(Map.Entry<String, Double> entry: params.entrySet()){
             stringBuilder.append(entry.getValue()).append(",");
         }
+        //Flags
         for(Map.Entry<String, Boolean> entry: flags.entrySet()){
             stringBuilder.append(entry.getValue()).append(",");
         }
-        //Flags
+        //Errors (spn+fmi)
+        if (!hstErrors.isEmpty()) {
+            for (Double d : hstErrors) {
+                stringBuilder.append(String.format("%.2f", d).replaceAll(",", ":")).append(";");
+            }
+            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+            stringBuilder.append(",");
+        }
         return stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString();
     }
 
