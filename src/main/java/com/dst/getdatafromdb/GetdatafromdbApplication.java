@@ -22,13 +22,16 @@ public class GetdatafromdbApplication {
     public static void main(String[] args) {
 //        SpringApplication.run(GetdatafromdbApplication.class, args);
 
-        MongoOperations mongoOpsParsed = new MongoTemplate(new SimpleMongoClientDatabaseFactory(MongoClients.create("mongodb://parsedreader:dst-ural@192.168.211.28:27017/?authSource=wl_parsed&readPreference=primary&appname=MongoDB%20Compass&ssl=false"), "wl_parsed"));
+//        MongoOperations mongoOpsParsed = new MongoTemplate(new SimpleMongoClientDatabaseFactory(MongoClients.create("mongodb://parsedreader:dst-ural@192.168.211.28:27017/?authSource=wl_parsed&readPreference=primary&appname=MongoDB%20Compass&ssl=false"), "wl_parsed"));
 
         String machineN = "";
         String from = "";
         String to = "";
+        String ipServ = "192.168.";
 
         try (BufferedReader br = new BufferedReader(new InputStreamReader(System.in))) {
+            System.out.println("Enter server ip: 192.168.? (example \"211.7\")");
+            ipServ = ipServ.concat(br.readLine());
             System.out.println("Enter machine number: ");
             machineN = br.readLine();
             System.out.println("Enter date from (yyyy-mm-dd): ");
@@ -38,6 +41,8 @@ public class GetdatafromdbApplication {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        MongoOperations mongoOpsParsed = new MongoTemplate(new SimpleMongoClientDatabaseFactory(MongoClients.create("mongodb://parsedreader:dst-ural@1"/*92.168.211.28*/ + ipServ + ":27017/?authSource=wl_parsed&readPreference=primary&appname=MongoDB%20Compass&ssl=false"), "wl_parsed"));
+
 
 //        Instant fromInst = Instant.parse(from);
 //        System.out.println(fromInst);
