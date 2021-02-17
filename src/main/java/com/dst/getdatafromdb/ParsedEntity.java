@@ -13,6 +13,7 @@ public class ParsedEntity {
     private TreeMap<String, Double> params;
     private TreeMap<String, Boolean> flags;
     private ArrayList<Double> hstErrors = new ArrayList<>();
+    private Coordinates coordinates;
 
     private String spliter = ";";
     private String errorSpliter = ",";
@@ -31,6 +32,11 @@ public class ParsedEntity {
         }
         //Errors (spn+fmi)
         stringBuilder.append("Errors (spn.fmi)").append(spliter);
+        //Coords
+        stringBuilder
+                .append("lon").append(spliter)
+                .append("lat").append(spliter)
+                .append("speed").append(spliter);
         return stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString();
     }
 
@@ -52,8 +58,13 @@ public class ParsedEntity {
                 stringBuilder.append(String.format("%.2f", d).replaceAll(",", ":")).append(errorSpliter);
             }
             stringBuilder.deleteCharAt(stringBuilder.length() - 1);
-            stringBuilder.append(spliter);
         }
+        stringBuilder.append(spliter);
+        //Coords
+        stringBuilder
+                .append(coordinates.getLon()).append(spliter)
+                .append(coordinates.getLat()).append(spliter)
+                .append(coordinates.getSpeed()).append(spliter);
         return stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString();
     }
 
