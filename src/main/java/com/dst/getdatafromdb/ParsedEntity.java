@@ -15,8 +15,8 @@ public class ParsedEntity {
     private ArrayList<Double> hstErrors = new ArrayList<>();
     private Coordinates coordinates;
 
-    private String spliter = ";";
-    private String errorSpliter = ",";
+    private final String spliter = ";";
+    private final String errorSpliter = ",";
 
     /** Нужно добавить обработку событий, когда заголовок был не сразу в данных, т.к. структура задана не жестко **/
     public String getCsvHeader(){
@@ -26,17 +26,17 @@ public class ParsedEntity {
         for(Map.Entry<String, Double> entry: params.entrySet()){
             stringBuilder.append(entry.getKey()).append(spliter);
         }
-        //Flags
-        for(Map.Entry<String, Boolean> entry: flags.entrySet()){
-            stringBuilder.append(entry.getKey()).append(spliter);
-        }
         //Errors (spn+fmi)
         stringBuilder.append("Errors (spn.fmi)").append(spliter);
         //Coords
         stringBuilder
-                .append("lon").append(spliter)
                 .append("lat").append(spliter)
+                .append("lon").append(spliter)
                 .append("speed").append(spliter);
+        //Flags
+        for(Map.Entry<String, Boolean> entry: flags.entrySet()){
+            stringBuilder.append(entry.getKey()).append(spliter);
+        }
         return stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString();
     }
 
@@ -48,10 +48,6 @@ public class ParsedEntity {
 //            stringBuilder.append(String.format("%f", entry.getValue())).append(spliter);
             stringBuilder.append(entry.getValue().toString().replace(".", ",")).append(spliter);
         }
-        //Flags
-        for(Map.Entry<String, Boolean> entry: flags.entrySet()){
-            stringBuilder.append(entry.getValue()).append(spliter);
-        }
         //Errors (spn+fmi)
         if (!hstErrors.isEmpty()) {
             for (Double d : hstErrors) {
@@ -62,9 +58,13 @@ public class ParsedEntity {
         stringBuilder.append(spliter);
         //Coords
         stringBuilder
-                .append(coordinates.getLon()).append(spliter)
                 .append(coordinates.getLat()).append(spliter)
+                .append(coordinates.getLon()).append(spliter)
                 .append(coordinates.getSpeed()).append(spliter);
+        //Flags
+        for(Map.Entry<String, Boolean> entry: flags.entrySet()){
+            stringBuilder.append(entry.getValue()).append(spliter);
+        }
         return stringBuilder.deleteCharAt(stringBuilder.length() - 1).toString();
     }
 
